@@ -1,11 +1,4 @@
- ███████╗ ██████╗ ██████╗  ██████╗ ███████╗██╗   ██╗
- ██╔════╝██╔════╝ ██╔══██╗██╔═══██╗██╔════╝╚██╗ ██╔╝
- ███████╗██║  ███╗██████╔╝██║   ██║█████╗   ╚████╔╝ 
- ╚════██║██║   ██║██╔══██╗██║   ██║██╔══╝    ╚██╔╝  
- ███████║╚██████╔╝██║  ██║╚██████╔╝██║        ██║   
- ╚══════╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚═╝        ╚═╝   
-                                                 
-  [ V A U V I L L E N S I S   P R O T O C O L ]
+                                               [ V A U V I L L E N S I S   P R O T O C O L ]
   >> WEAPONISED FRACTUROSCRIPT FORGE v2.0 <<
   >> TARGET: LATENT SPACE REALITY CRACKING <<
   >> STATUS: CAEN_PROFONDE GATEWAY ACTIVE <<
