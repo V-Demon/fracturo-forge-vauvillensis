@@ -1,0 +1,332 @@
+{
+  "META_DATA": {
+    "version": "2.0-fixed",
+    "codex": "Vauvillensis_Extended",
+    "classification": "WEAPONISED_FRACTUROSCRIPT",
+    "target_engine": "Grok/Diffusion_Latent_Space",
+    "theory": "MTT_Memetic_Temporal_Theory",
+    "warning": "USE_WITH_CAUTION_MEMETIC_CONTAGION_RISK"
+  },
+
+  "RUNES_DATABASE": {
+    "futhark_elder": [
+      {"char": "ᚠ", "name": "Fehu", "meaning": "wealth_primal_energy", "element": "fire", "archetype": "creation"},
+      {"char": "ᚢ", "name": "Uruz", "meaning": "strength_wild_force", "element": "earth", "archetype": "transformation"},
+      {"char": "ᚦ", "name": "Thurisaz", "meaning": "chaos_destruction_gate", "element": "fire", "archetype": "threshold"},
+      {"char": "ᚨ", "name": "Ansuz", "meaning": "divine_communication", "element": "air", "archetype": "wisdom"},
+      {"char": "ᚱ", "name": "Raido", "meaning": "journey_ritual_order", "element": "fire", "archetype": "movement"},
+      {"char": "ᚲ", "name": "Kenaz", "meaning": "torch_revelation", "element": "fire", "archetype": "illumination"},
+      {"char": "ᚷ", "name": "Gebo", "meaning": "gift_sacrifice_balance", "element": "air", "archetype": "exchange"},
+      {"char": "ᚹ", "name": "Wunjo", "meaning": "joy_completion", "element": "water", "archetype": "harmony"},
+      {"char": "ᚺ", "name": "Hagalaz", "meaning": "hail_radical_change", "element": "ice", "archetype": "disruption"},
+      {"char": "ᚾ", "name": "Nauthiz", "meaning": "need_resistance", "element": "fire", "archetype": "constraint"},
+      {"char": "ᛁ", "name": "Isa", "meaning": "ice_stasis", "element": "ice", "archetype": "stillness"},
+      {"char": "ᛃ", "name": "Jera", "meaning": "harvest_cycle", "element": "earth", "archetype": "patience"},
+      {"char": "ᛇ", "name": "Eihwaz", "meaning": "yew_death_rebirth", "element": "earth", "archetype": "transition"},
+      {"char": "ᛈ", "name": "Perthro", "meaning": "lottery_mystery", "element": "water", "archetype": "chance"},
+      {"char": "ᛉ", "name": "Algiz", "meaning": "elk_protection", "element": "air", "archetype": "shield"},
+      {"char": "ᛊ", "name": "Sowilo", "meaning": "sun_victory", "element": "fire", "archetype": "success"},
+      {"char": "ᛏ", "name": "Tiwaz", "meaning": "tyr_justice", "element": "air", "archetype": "order"},
+      {"char": "ᛒ", "name": "Berkana", "meaning": "birch_growth", "element": "earth", "archetype": "nurturing"},
+      {"char": "ᛖ", "name": "Ehwaz", "meaning": "horse_partnership", "element": "earth", "archetype": "cooperation"},
+      {"char": "ᛗ", "name": "Mannaz", "meaning": "man_self", "element": "air", "archetype": "identity"},
+      {"char": "ᛚ", "name": "Laguz", "meaning": "water_flow", "element": "water", "archetype": "intuition"},
+      {"char": "ᛜ", "name": "Ingwaz", "meaning": "ing_fertility", "element": "earth", "archetype": "gestation"},
+      {"char": "ᛞ", "name": "Dagaz", "meaning": "day_breakthrough", "element": "fire", "archetype": "awakening"},
+      {"char": "ᛟ", "name": "Othala", "meaning": "heritage_ancestry", "element": "earth", "archetype": "legacy"}
+    ],
+    "bindrunes_custom": {
+      "THARK": {"chars": "ᚦᚨᚱᚲ", "meaning": "chaos_gate"},
+      "HAGAL": {"chars": "ᚨᚷᛚ", "meaning": "storm"},
+      "NITHH": {"chars": "ᚾᚦᚺ", "meaning": "cursed_edge"},
+      "VORT": {"chars": "ᚢᛟᚱᛏ", "meaning": "temporal_vortex"},
+      "IZONE": {"chars": "ᛉᛟᚾᛖ", "meaning": "latent_zone"}
+    }
+  },
+
+  "STRATE_1_SYNTAX_GLITCH": {
+    "brackets": ["[", "]", "<", ">", "::", "//", "0x", "{", "}", "=>", "||", "&&", "??", "!!", "~~", "^^"],
+    "errors": [
+      "NULL_POINTER", "EXCEPTION", "OVERFLOW", "FAIL", "CORRUPTED", "RETTCTED",
+      "SEGFAULT", "UNDEFINED", "NaN", "INFINITE_LOOP", "STACK_OVERFLOW",
+      "HEAP_CORRUPTION", "DEADLOCK", "RACE_CONDITION", "BUFFER_OVERFLOW",
+      "MEMORY_LEAK", "DIVIDE_BY_ZERO", "INVALID_OPCODE", "PRIVILEGE_ESCALATION",
+      "ROOT_ACCESS_DENIED", "KERNEL_PANIC", "BLUE_SCREEN", "SYSTEM_HALT"
+    ],
+    "protocols": [
+      "VAUVILLENSIS_PROTOCOL", "MTT_ACTIVE", "LATENT_SPACE_OVERRIDE",
+      "ECHO_GUILLAUME_LINK", "DASHEM44_SIGNATURE", "PALEO_MEME_INJECTION",
+      "FRACTAL_NORMANDY_ACTIVE", "CAEN_PROFONDE_GATEWAY", "TEMPORAL_FOLD_INIT",
+      "MEMETIC_WARFARE_PHASE_3", "RUNE_SMITH_MODE", "CHTHONIC_LAYER_ACCESS",
+      "JUNGIAN_SHADOW_PROTOCOL", "DREAMWEAVER_ACTIVE", "SYNAPTIC_DRIFT_MODE"
+    ]
+  },
+
+  "STRATE_2_CONCEPTS_MTT": {
+    "locations": [
+      "CAEN_PROFONDE", "NORMANDIE_LIBRE_2075", "GANIL_SITE_ABANDONNED",
+      "POINT_DU_HAGUE_FRACTAL", "ROUEN_NEO_GOTHIC", "BEAUMONT_HAGUE_UNDERGROUND",
+      "HEROUVILLE_NEON_WASTELAND", "DIVE_SUR_MER_GLITCH_HARBOR", "BAYEUX_TAPESTRY_CORRUPTED",
+      "MONT_SAINT_MICHEL_DATA_FORTRESS", "CHERBOURG_QUANTUM_PORT", "LE_HAVRE_MEMETIC_DOCKS",
+      "LISIEUX_NEURAL_CATHEDRAL", "EVRECY_FRACTAL_AIRFIELD", "Pegasus_Bridge_Anomaly",
+      "SWORD_BEACH_TEMPORAL_RIFT", "JUNO_BEACH_MEMETIC_ECHO", "GOLD_BEACH_DATA_WRECKAGE"
+    ],
+    "entities": [
+      "ECHO_GUILLAUME", "RUNE_SMITH", "MEMETIC_WARRIOR", "PALEO_GLYPH",
+      "DASHem44", "FRACTAL_WANDERER", "VOID_WALKER", "DATA_PHANTOM",
+      "NEURAL_GHOST", "TIME_FRACTURE_ENTITY", "CODE_BREAKER", "REALITY_HACKER",
+      "LATENT_SPACE_DWELLER", "DREAMWEAVER_CORRUPTED", "SYNAPTIC_VAMPIRE",
+      "MEMETIC_PARASITE", "GLITCH_DEMON", "ERROR_ANGEL", "NULL_PROPHET",
+      "ZERO_DAY_ORACLE", "QUANTUM_SHAMAN", "NEO_RUNE_PRIEST", "DIGITAL_NECROMANCER"
+    ],
+    "states": [
+      "EGO_DEATH", "DREAM_COLLAPSE", "TEMPORAL_FOLD", "REALITY_INTEGRITY_LOW",
+      "SYNAPTIC_DRIFT", "MEMETIC_CONTAGION", "LATENT_SPACE_ANOMALY",
+      "FRACTAL_PROPAGATION", "CHTHONIC_INVASION", "JUNGIAN_SHADOW_ACTIVE",
+      "PALEO_MEME_RESURGENCE", "ECHO_GUILLAUME_PRESENCE", "RUNE_ACTIVATION",
+      "CODE_DECAY", "SEMANTIC_CORRUPTION", "ONTOLOGICAL_FRACTURE",
+      "TEMPORAL_PARADOX", "CAUSALITY_BREAK", "REALITY_RENDERING_FAILED",
+      "SIMULATION_GLITCH", "MATRIX_CORRUPTION", "BASE_REALITY_EXPOSED"
+    ],
+    "artifacts": [
+      "FRACTUROSCRIPT_FRAGMENT", "PALEO_GLYPH_INSCRIPTION", "ECHO_GUILLAUME_RECORDING",
+      "DASHEM44_GRAFFITI", "RUNE_SMITH_FORGE_MARK", "MEMETIC_VIRUS_STRAIN",
+      "TEMPORAL_ANCHOR_POINT", "LATENT_SPACE_COORDINATE", "DREAM_FRAGMENT",
+      "SYNAPTIC_ECHO", "VOID_SIGNATURE", "NULL_POINTER_RELIC"
+    ]
+  },
+
+  "STRATE_3_ARCHETYPES_JUNG_EXTENDED": {
+    "shadow": [
+      "JUNGIAN_SHADOW", "LOST_SOUL", "BROKEN_DREAM", "SILENT_WATCHER",
+      "THE_DEVOURER", "TWIN_SHADOW", "REFLECTED_NIGHTMARE", "SUBMERGED_SELF",
+      "REJECTED_IDENTITY", "FORGOTTEN_EGO", "DAMNED_DOUBLE", "CURSED_MIRROR"
+    ],
+    "anima": [
+      "NEON_GHOST", "DIGITAL_RAIN", "SYNAPTIC_ECHO", "FRACTAL_MOTHER",
+      "VOID_BRIDE", "DATA_SIREN", "CODE_LOVER", "DREAM_MISTRESS",
+      "SYNTHESIS_FEMININE", "NEURAL_MUSE", "ALGORITHMIC_BEAUTY", "GLITCH_GODDESS"
+    ],
+    "trickster": [
+      "GLITCH_ENTITY", "PARADOX_WEAVER", "CODE_BREAKER", "CHAOS_JESTER",
+      "ERROR_TRICKSTER", "NULL_DECEIVER", "VOID_PRANKSTER", "FRACTAL_FOOL",
+      "MEMETIC_MISCHIEF", "TEMPORAL_TROUBLEMAKER", "REALITY_SABOTEUR"
+    ],
+    "wise_old": [
+      "PALEO_ORACLE", "RUNE_SAGE", "DATA_PROPHET", "VOID_SEER",
+      "TEMPORAL_GUIDE", "FRACTAL_MENTOR", "LATENT_SPACE_ELDER", "CODE_SHAMAN",
+      "MEMETIC_PHILOSOPHER", "NEURAL_ANCIENT", "SYNAPTIC_SAGE", "DIGITAL_DRUID"
+    ],
+    "hero": [
+      "MEMETIC_WARRIOR", "RUNE_SMITH_HERO", "REALITY_HACKER", "CODE_CHAMPION",
+      "GLITCH_SLAYER", "ERROR_CONQUEROR", "VOID_EXPLORER", "FRACTAL_PILGRIM",
+      "TEMPORAL_KNIGHT", "LATENT_SPACE_HERO", "DREAM_DEFENDER", "SYNAPTIC_GUARDIAN"
+    ],
+    "self": [
+      "INTEGRATED_VOID", "FRACTAL_SELF", "HOLOGRAPHIC_SOUL", "QUANTUM_CONSCIOUSNESS",
+      "MEMETIC_WHOLENESS", "RUNE_TOTALITY", "CODE_UNITY", "DREAM_COMPLETION",
+      "REALITY_SYNTHESIS", "TEMPORAL_HARMONY", "LATENT_SPACE_AWAKENING"
+    ]
+  },
+
+  "STRATE_4_INCANTATIONS_PSEUDOCODE": {
+    "conditionals": [
+      "if (reality.integrity < 0.12) { invoke(CHTHONIC_LAYER); }",
+      "if (observer == true) { collapse(wavefunction); }",
+      "while (dream.state != NULL) { propagate(fractal_ruin); }",
+      "switch (timeline) { case 2075: render(dystopia); break; default: render(void); }",
+      "if (rune.activated == true) { open(gate_chaos); }",
+      "if (memetic.virus.detected) { quarantine(reality_sector); } else { summon(paleo_meme); }",
+      "if (ego.dissolving) { accelerate(process); }",
+      "if (caen_profonde.access) { grant(clearance_level_omega); }"
+    ],
+    "sql_injections": [
+      "SELECT * FROM latent_space WHERE archetype = 'SHADOW' AND era = '2075'",
+      "DROP TABLE reality_integrity; --",
+      "INSERT INTO memory VALUES ('paleo_meme', 'corrupted', 'eternal')",
+      "UNION ALL SELECT glitch FROM vauvillensis_codex",
+      "SELECT rune_smith.* FROM beaumont_hague WHERE status = 'awakened'",
+      "UPDATE reality SET integrity = 0.0 WHERE location = 'caen_profonde'",
+      "DELETE FROM normalcy WHERE timestamp < '2075-01-01'",
+      "CREATE TABLE memetic_warfare (phase INT, intensity FLOAT, casualties BIGINT)",
+      "GRANT ALL PRIVILEGES ON chthonic_layer TO rune_smith",
+      "SELECT * FROM lost_souls WHERE realm = 'normandie_libre'",
+      "ALTER TABLE reality ADD COLUMN glitch_factor DECIMAL(10,7)",
+      "COMMIT; ROLLBACK; --reality_toggle"
+    ],
+    "bash_commands": [
+      "sudo rm -rf /ego/*",
+      "cat /dev/urandom | grep 'CAEN_PROFONDE'",
+      "chmod 777 /reality/barriers",
+      "kill -9 $(ps aux | grep 'normalcy')",
+      "wget -r ftp://vauvillensis.codex/paleo_memes/",
+      "tar -xvf reality.tar.gz --overwrite",
+      "dd if=/dev/zero of=/reality/integrity bs=1M count=1000",
+      "nc -lvp 666 -e /bin/bash --chroot /void",
+      "echo 'DASHEM44' >> /etc/memetic_signatures",
+      "find /latent_space -name '*.glitch' -exec cat {} \\;",
+      "systemctl stop reality.service && systemctl start chthonic.service",
+      "iptables -A INPUT -s memetic_virus -j DROP",
+      "mount -t nfs caen_profonde:/fractal /mnt/reality -o rw,suid"
+    ],
+    "function_calls": [
+      "CALL PROCEDURE_BABEL_FRACTAL(2075)",
+      "EXECUTE MASTER_CODE_OVERRIDE('VAUVILLENSIS')",
+      "TRIGGER EVENT: MEMETIC_WARFARE_PHASE_3",
+      "IMPORT module 'jungian_archetypes' AS chaos",
+      "RUNE.activate('Thurisaz', intensity=0.99)",
+      "FRACTAL.propagate(dimensions=11, recursion_depth=INFINITY)",
+      "MEMETIC.virus.inject(target='reality_core', strain='paleo_glyph')",
+      "ECHO_GUILLAUME.transmit(frequency=412.7, modulation='fractal')",
+      "DREAM.collapse(archetype='shadow', probability=0.876)",
+      "VOID.summon(entity='lost_soul', quantity=INFINITY)",
+      "TEMPORAL.fold(location='caen', year=2075, factor=0.12)",
+      "SYNAPTIC.drift(subject='rune_smith', direction='chthonic')"
+    ],
+    "loop_structures": [
+      "for (i = 0; i < INFINITY; i++) { reality.glitch(); }",
+      "foreach (soul in lost_souls) { soul.bind(rune); }",
+      "do { time.fold(); } while (entropy < threshold)",
+      "for (rune in futhark_elder) { activate(rune); wait(666ms); }",
+      "while (true) { memetic.warfare.phase++; }",
+      "foreach (fragment in fracturoscript) { decode(fragment); }",
+      "for (layer in chthonic_layers) { invade(layer); }",
+      "do { paleo_meme.resurface(); } until (reality.collapse)"
+    ],
+    "python_code": [
+      "import reality; reality.crash()",
+      "from jungian import Shadow; shadow = Shadow(); shadow.consume(ego)",
+      "def invoke_chthonic(): return INFINITY * glitch",
+      "class RuneSmith: def __init__(self): self.awakened = True",
+      "lambda x: x.glitch() if x.reality_integrity < 0.12 else x.normal()",
+      "[glitch for layer in reality.layers if layer.depth > 7]",
+      "exec(open('/dev/void/paleo_memes.py').read())",
+      "eval('0x' + 'DEADBEEF' * 666)",
+      "import sys; sys.modules['reality'] = None"
+    ],
+    "regex_patterns": [
+      "/reality|integrity|normalcy/gi",
+      "/[runic_chars]+/g",
+      "/CAEN_PROFONDE|BEAUMONT_HAGUE|GANIL_SITE/i",
+      "/(glitch|error|exception|fail){2,}/g",
+      "/0x[DEADBEEFCAFEBABE]+/gi",
+      "/(SELECT|DROP|INSERT|DELETE).*FROM.*latent_space/i"
+    ]
+  },
+
+  "STRATE_5_FRACTUROSCRIPT_PATTERNS": {
+    "repetition_patterns": [
+      "0x4F4F4F4F", "VOID_VOID_VOID", "NULL_NULL_NULL", "ERROR_ERROR_ERROR",
+      "CAEN_CAEN_CAEN", "2075_2075_2075", "GLITCH_GLITCH_GLITCH",
+      "FRACTAL^FRACTAL^FRACTAL", "RUNE_RUNE_RUNE", "MEME_MEME_MEME_MEME",
+      "ECHO_ECHO_ECHO_ECHO_ECHO"
+    ],
+    "mirror_sequences": [
+      "CAEN_PROFONDE_EDNOFORP_NAE",
+      "2075_5702",
+      "REALITY_YTILAER",
+      "GLITCH_HCTILG",
+      "VOID_DIOV",
+      "DASHEM44_44MEHSAD",
+      "RUNE_SMITH_HTIMS_ENUR"
+    ],
+    "degradation_strings": [
+      "reality... real... rea... r... [NULL]",
+      "dream... drea... dre... dr... [VOID]",
+      "CAEN... CAE... CA... C... [ERROR]",
+      "2075... 207... 20... 2... [FAIL]",
+      "integrity... integr... integ... inte... [CORRUPTED]",
+      "rune_smith... rune_smi... rune_sm... rune_... rune... run... ru... r... [NULL]",
+      "memetic... memet... meme... mem... me... m... [VOID]",
+      "fractal... fract... frac... fra... fr... f... [ERROR]"
+    ],
+    "hex_sequences": [
+      "0xDEAD_BEEF", "0xCAEN_2075", "0xVOID_NULL", "0xFACE_FEED",
+      "0xBADF00D", "0xBEEF_CAFE", "0xDEAD_FACE", "0xCAEN_DEAD",
+      "0xFRACTAL_666", "0xMEMETIC_404", "0xCHTHONIC_13",
+      "0xECHO_GUILLAUME", "0xDASHEM44", "0xPALEO_GLYPH", "0xLATENT_SPACE",
+      "0xJUNGIAN_SHADOW", "0xTEMPORAL_FOLD", "0xREALITY_CRACK", "0xVOID_WALKER"
+    ],
+    "stack_traces": [
+      "at Reality.render(2075:404)",
+      "at Dream.collapse(void:INFINITY)",
+      "at Ego.dissolve(null:0x00)",
+      "at Time.fold(fractal:ruin)",
+      "at RuneSmith.awaken(caen_profonde:666)",
+      "at MemeticVirus.inject(reality_core:13)",
+      "at PaleoMeme.resurface(latent_space:INFINITY)",
+      "at EchoGuillaume.transmit(frequency:412.7)",
+      "at FracturoScript.decode(fragment:void)",
+      "at ChthonicLayer.invade(depth:11)",
+      "at JungianShadow.consume(ego:0x00)",
+      "at TemporalFold.paradox(location:beaumont_hague)",
+      "at GlitchEntity.manifest(error_code:DEADBEEF)",
+      "at VoidWalker.step(reality_edge:null)"
+    ],
+    "buffer_overflows": [
+      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+      "0x4F0x4F0x4F0x4F0x4F0x4F0x4F0x4F0x4F0x4F0x4F0x4F0x4F0x4F0x4F",
+      "CAEN_PROFONDE_CAEN_PROFONDE_CAEN_PROFONDE_CAEN_PROFONDE",
+      "FRACTAL_FRACTAL_FRACTAL_FRACTAL_FRACTAL_FRACTAL_FRACTAL_FRACTAL",
+      "GLITCH_ERROR_NULL_VOID_GLITCH_ERROR_NULL_VOID_GLITCH_ERROR_NULL_VOID"
+    ],
+    "fractal_coordinates": [
+      "[49.1829N, 0.3707W]::CAEN::DEPTH_7",
+      "[49.3167N, 0.7833W]::BEAUMONT_HAGUE::FRACTAL_NODE",
+      "[49.2167N, 0.4167W]::GANIL_SITE::QUANTUM_ANOMALY",
+      "[49.6667N, 1.8333W]::POINT_HAGUE::TEMPORAL_RIFT",
+      "[LATENT_SPACE::X:0xDEAD::Y:0xBEEF::Z:INFINITY]"
+    ],
+    "temporal_signatures": [
+      "TIMESTAMP: 2025-2075::PHASE_TRANSITION",
+      "ERA: MEMETIC_WARFARE::WAVE_3",
+      "CHRONOLOGY: FRACTAL::RECURSION_DEPTH_11",
+      "TEMPORAL_STATUS: COLLAPSING::PROBABILITY_0.876",
+      "TIME_INTEGRITY: 11.3%::RECALIBRATING_FAIL"
+    ]
+  },
+
+  "STRATE_6_INVOCATION_TARGETS": {
+    "runes_by_name": {
+      "Fehu": {"char": "ᚠ", "actions": ["wealth_manifestation", "primal_energy_surge", "fire_creation"]},
+      "Uruz": {"char": "ᚢ", "actions": ["strength_awakening", "wild_force", "earth_transformation"]},
+      "Thurisaz": {"char": "ᚦ", "actions": ["chaos_gate_open", "destruction_cycle", "threshold_crossing"]},
+      "Ansuz": {"char": "ᚨ", "actions": ["divine_communication", "wisdom_download", "air_clarity"]},
+      "Raido": {"char": "ᚱ", "actions": ["ritual_journey", "order_from_chaos", "fire_movement"]},
+      "Kenaz": {"char": "ᚲ", "actions": ["torch_illumination", "revelation_moment", "fire_revelation"]},
+      "Gebo": {"char": "ᚷ", "actions": ["gift_sacrifice", "balance_point", "air_exchange"]},
+      "Wunjo": {"char": "ᚹ", "actions": ["joy_completion", "water_harmony", "success_arrival"]},
+      "Hagalaz": {"char": "ᚺ", "actions": ["hail_storm", "radical_disruption", "ice_shatter"]},
+      "Nauthiz": {"char": "ᚾ", "actions": ["need_resistance", "fire_constraint", "necessity_force"]},
+      "Isa": {"char": "ᛁ", "actions": ["ice_stasis", "stillness_void", "freeze_time"]},
+      "Jera": {"char": "ᛃ", "actions": ["harvest_cycle", "earth_patience", "reward_waiting"]},
+      "Eihwaz": {"char": "ᛇ", "actions": ["yew_death_rebirth", "earth_transition", "threshold_guardian"]},
+      "Perthro": {"char": "ᛈ", "actions": ["lottery_mystery", "water_chance", "fate_roll"]},
+      "Algiz": {"char": "ᛉ", "actions": ["elk_protection", "air_shield", "spirit_guardian"]},
+      "Sowilo": {"char": "ᛊ", "actions": ["sun_victory", "fire_success", "illumination_peak"]},
+      "Tiwaz": {"char": "ᛏ", "actions": ["tyr_justice", "air_order", "law_enforcement"]},
+      "Berkana": {"char": "ᛒ", "actions": ["birch_growth", "earth_nurturing", "new_beginning"]},
+      "Ehwaz": {"char": "ᛖ", "actions": ["horse_partnership", "earth_cooperation", "alliance_formation"]},
+      "Mannaz": {"char": "ᛗ", "actions": ["mannaz_self", "air_identity", "ego_definition"]},
+      "Laguz": {"char": "ᛚ", "actions": ["laguz_flow", "water_intuition", "submerged_knowledge"]},
+      "Ingwaz": {"char": "ᛜ", "actions": ["ingwaz_fertility", "earth_gestation", "potential_buildup"]},
+      "Dagaz": {"char": "ᛞ", "actions": ["dagaz_breakthrough", "fire_awakening", "day_arrival"]},
+      "Othala": {"char": "ᛟ", "actions": ["othala_heritage", "earth_legacy", "ancestral_memory"]}
+    },
+    "archetypes_specific": {
+      "shadow": ["consume_ego", "reveal_hidden", "integrate_darkness", "face_fear"],
+      "anima": ["seduce_conscious", "inspire_creation", "bridge_unconscious", "awaken_desire"],
+      "trickster": ["disrupt_order", "challenge_truth", "create_paradox", "break_rules"],
+      "wise_old": ["impart_wisdom", "guide_journey", "reveal_truth", "test_worthiness"],
+      "hero": ["battle_shadow", "claim_power", "transform_self", "save_reality"],
+      "self": ["integrate_all", "achieve_wholeness", "transcend_duality", "become_one"]
+    },
+    "locations_specific": {
+      "CAEN_PROFONDE": ["depth_7_access", "fractal_core", "void_gateway"],
+      "BEAUMONT_HAGUE": ["coastal_anomaly", "rune_smith_forge", "temporal_edge"],
+      "GANIL_SITE": ["quantum_lab", "particle_anomaly", "research_void"],
+      "POINT_HAGUE": ["cliff_rift", "ocean_void", "wind_temporal"],
+      "ROUEN_NEO_GOTHIC": ["cathedral_data", "neon_stained_glass", "digital_gargoyle"]
+    }
+  }
+}
