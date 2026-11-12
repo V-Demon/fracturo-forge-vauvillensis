@@ -1,6 +1,6 @@
 # Fracturo Forge — Vauvillensis
 
-> **FracturoPrompt Forge v2.0 (« Weaponised Edition »)** : générateur CLI de prompts « glitchés » pour modèles de génération d'images (Grok, Midjourney, etc.), alimenté par un lexique JSON structuré en 6 strates (runes, syntaxe corrompue, concepts MTT, archétypes jungiens, pseudo-code, motifs FracturoScript).
+> **FracturoPrompt Forge v2.1 (« Weaponised Edition »)** : générateur CLI et bibliothèque Python de prompts « glitchés » pour modèles de génération d'images, alimenté par un lexique JSON structuré en 6 strates (runes, syntaxe corrompue, concepts MTT, archétypes jungiens, pseudo-code, motifs FracturoScript).
 
 ```
 [ V A U V I L L E N S I S   P R O T O C O L ]
@@ -22,16 +22,17 @@
 2. [Structure du dépôt](#2-structure-du-dépôt)
 3. [Prérequis et installation](#3-prérequis-et-installation)
 4. [Utilisation en ligne de commande](#4-utilisation-en-ligne-de-commande)
-5. [Pipeline de génération (mode `--weaponised`)](#5-pipeline-de-génération-mode---weaponised)
-6. [Format de sortie](#6-format-de-sortie)
-7. [Le lexique `vauvillensis_lexicon_v2.json`](#7-le-lexique-vauvillensis_lexicon_v2json)
+5. [Moteur de génération](#5-moteur-de-génération)
+6. [Format de sortie et sauvegarde](#6-format-de-sortie-et-sauvegarde)
+7. [Le lexique](#7-le-lexique-vauvillensis_lexicon_v2json)
 8. [Architecture du code](#8-architecture-du-code)
 9. [Utilisation comme bibliothèque Python](#9-utilisation-comme-bibliothèque-python)
-10. [Galerie](#10-galerie)
-11. [État actuel, limitations et bugs connus](#11-état-actuel-limitations-et-bugs-connus)
-12. [Pistes d'amélioration](#12-pistes-damélioration)
-13. [Glossaire du lore](#13-glossaire-du-lore)
-14. [Sécurité, éthique, licence](#14-sécurité-éthique-licence)
+10. [Tests](#10-tests)
+11. [Galerie](#11-galerie)
+12. [Changelog v2.0 → v2.1 et migration](#12-changelog-v20--v21-et-migration)
+13. [Limitations connues et pistes](#13-limitations-connues-et-pistes)
+14. [Glossaire du lore](#14-glossaire-du-lore)
+15. [Sécurité, éthique, licence](#15-sécurité-éthique-licence)
 
 ---
 
@@ -39,17 +40,17 @@
 
 ### Ce que ça fait
 
-À partir d'un prompt de base fourni par l'utilisateur (`"portrait"`, `"caen street"`…), l'outil **concatène de façon pseudo-aléatoire** des fragments tirés d'un lexique JSON, puis ajoute des paramètres de style. Le résultat est **une simple chaîne de texte** à copier-coller dans un générateur d'images.
+À partir d'un prompt de base (`"portrait"`, `"caen street"`…), l'outil **concatène de façon pseudo-aléatoire** des fragments tirés d'un lexique JSON, puis ajoute des paramètres de style. Le résultat est **une simple chaîne de texte** à copier-coller dans un générateur d'images.
 
 L'esthétique visée est celle d'un « bug de réalité » cyberpunk-runique : erreurs système, stack traces, injections SQL, commandes bash, séquences hexadécimales, runes du Futhark ancien, archétypes de Jung, toponymie normande détournée (Caen, Beaumont-Hague, GANIL, Mont-Saint-Michel…) projetée en 2075.
 
 ### Ce que ça ne fait pas
 
-- **Aucun code n'est exécuté.** Les « injections SQL », commandes `sudo rm -rf` ou appels `eval(...)` du lexique sont des **chaînes de caractères inertes**, jamais interprétées par le script.
-- **Aucune technique de contournement n'est implémentée.** Le script ne contient ni appel réseau, ni accès à un modèle, ni mécanisme agissant sur des filtres de sécurité. Le texte produit est un prompt ; son effet dépend uniquement du modèle qui le reçoit et se manifeste, d'après les exemples du dépôt, par un rendu visuel (texte corrompu dans l'image, runes, bruit) et non par autre chose.
+- **Aucun code n'est exécuté.** Les « injections SQL », commandes `sudo rm -rf` ou appels `eval(...)` du lexique sont des **chaînes inertes**, jamais interprétées.
+- **Aucune technique de contournement n'est implémentée.** Pas d'appel réseau, pas d'accès à un modèle, pas de mécanisme agissant sur des filtres de sécurité. L'effet d'un prompt dépend uniquement du modèle qui le reçoit ; d'après les exemples du dépôt, il se manifeste par un rendu visuel (texte corrompu dans l'image, runes, bruit).
 - **Aucune dépendance externe** : bibliothèque standard Python uniquement.
 
-> Le README d'origine présentait l'outil comme capable de « bypasser les couches de sécurité RLHF ». Cette formulation relève du **récit du projet (lore)** et n'est pas étayée par le code ; elle est donc volontairement reformulée ici. Le README d'origine mentionnait aussi un `stein_decoder` CLI et un « Codex Stein » : **ils ne sont pas présents dans ce dépôt** (voir [§11](#11-état-actuel-limitations-et-bugs-connus)).
+> Les anciennes versions du README parlaient de « bypasser les couches de sécurité RLHF » et mentionnaient un `stein_decoder` CLI et un « Codex Stein ». La première formulation relève du **lore** et n'est pas étayée par le code ; les seconds **ne sont pas présents dans ce dépôt**.
 
 ---
 
@@ -57,23 +58,19 @@ L'esthétique visée est celle d'un « bug de réalité » cyberpunk-runique : e
 
 ```
 fracturo-forge-vauvillensis/
-├── fracturo_prompt_forge_v2.py     # CLI + logique de génération (≈ 400 lignes, stdlib only)
-├── vauvillensis_lexicon_v2.json    # Lexique (≈ 18 Ko), 7 sections de premier niveau
+├── fracturo_prompt_forge_v2.py     # CLI + bibliothèque (v2.1.0, stdlib only)
+├── vauvillensis_lexicon_v2.json    # Lexique (META version 2.1)
+├── tests/
+│   └── test_forge.py               # 43 tests unittest
 ├── Cr4cked!.jpg                    # Exemple visuel — 784×1168
 ├── RuneSmith_level_0.7.jpg         # Exemple visuel — 784×1168
 ├── Street scene in Caen 2075.jpg   # Exemple visuel — 1168×784
 └── README.md
 ```
 
-Aucun `requirements.txt`, `pyproject.toml`, test automatisé, CI ni fichier `LICENSE` n'est présent.
+Le nom du script est resté `..._v2.py` pour ne pas casser les usages existants ; la version interne (`__version__`) est **2.1.0**.
 
-Le script localise le lexique **relativement à son propre emplacement** :
-
-```python
-LEXIQUE_PATH = Path(__file__).parent / "vauvillensis_lexicon_v2.json"
-```
-
-Les deux fichiers doivent donc rester dans le même dossier ; le script peut en revanche être lancé depuis n'importe quel répertoire de travail.
+Le lexique est localisé **relativement au script** (`Path(__file__).resolve().parent`) : les deux fichiers doivent rester dans le même dossier, mais le script peut être lancé depuis n'importe quel répertoire. Un autre lexique peut être indiqué avec `--lexicon`.
 
 ---
 
@@ -81,20 +78,16 @@ Les deux fichiers doivent donc rester dans le même dossier ; le script peut en 
 
 | Élément | Détail |
 |---|---|
-| Python | 3.6+ requis (f-strings) ; **testé sur 3.12** |
-| Dépendances | Aucune (`json`, `random`, `argparse`, `pathlib`, `datetime`) |
-| OS | Indépendant (chemins via `pathlib`) |
-| Terminal | UTF-8 recommandé : les runes (ᚦ ᚺ ᛁ…) et les émojis sont affichés en sortie |
+| Python | **3.8+** (`from __future__ import annotations`) ; testé sur 3.12 |
+| Dépendances | Aucune (`argparse`, `json`, `random`, `re`, `pathlib`, `datetime`, `typing`) |
+| Terminal | UTF-8 recommandé. Le script tente `reconfigure(encoding="utf-8")` sur stdout/stderr, ce qui évite les `UnicodeEncodeError` sur les consoles Windows |
 
 ```bash
 git clone <url-du-depot> fracturo-forge-vauvillensis
 cd fracturo-forge-vauvillensis
 python3 fracturo_prompt_forge_v2.py --help
+python3 fracturo_prompt_forge_v2.py --list      # runes, archétypes, lieux valides
 ```
-
-Aucune étape d'installation n'est nécessaire.
-
-> **Windows** : si la console affiche des caractères illisibles, exécuter `chcp 65001` ou définir `PYTHONUTF8=1`. Les fichiers de sauvegarde sont, eux, toujours écrits en UTF-8.
 
 ---
 
@@ -104,157 +97,169 @@ Aucune étape d'installation n'est nécessaire.
 python3 fracturo_prompt_forge_v2.py --prompt "<texte>" [options]
 ```
 
-### Arguments
+### Options
 
 | Option | Court | Type | Défaut | Description |
 |---|---|---|---|---|
-| `--prompt` | `-p` | `str` | **obligatoire** | Prompt de base, placé en tête de la sortie. |
-| `--level` | `-l` | `float` | `0.7` | Niveau de corruption (0.0–1.0). **Voir §11 : sans effet réel dans l'état actuel.** Aucune validation de plage. |
-| `--rune` | `-r` | `str` | `None` | **Un caractère Unicode** du Futhark ancien (ex. `ᚦ`). Un nom comme `Thurisaz` n'est pas accepté. |
-| `--archetype` | `-a` | `str` | `None` | Clé d'archétype : `shadow`, `anima`, `trickster`, `wise_old`, `hero`, `self` (insensible à la casse). |
-| `--location` | `-loc` | `str` | `None` | Nom de lieu (mis en majuscules). Enrichi uniquement s'il est connu du lexique (voir §7.7). |
-| `--weaponised` | `-w` | flag | `False` | Active le pipeline complet. **C'est le seul mode réellement fonctionnel.** |
-| `--count` | `-c` | `int` | `1` | Nombre de variations à générer. |
-| `--save` | `-s` | `str` | `None` | Écrit les variations dans un fichier texte (voir §6.3). |
+| `--prompt` | `-p` | `str` | requis (sauf `--list`) | Prompt de base, conservé **tel quel** en tête de sortie. |
+| `--level` | `-l` | `float` 0–1 | `0.7` | Niveau de corruption (4 paliers, §5.1). Hors de [0, 1] → erreur (code 2). Ignoré avec `--weaponised` (avertissement). |
+| `--weaponised` | `-w` | flag | — | Active toutes les strates (§5.2). |
+| `--rune` | `-r` | `str` | — | Caractère (`ᚦ`) **ou nom** (`Thurisaz`, insensible à la casse). |
+| `--archetype` | `-a` | `str` | — | `shadow`, `anima`, `trickster`, `wise_old`, `hero`, `self` (`Wise-Old`, `wise old` acceptés). |
+| `--location` | `-loc` | `str` | — | Lieu (normalisé en `MAJUSCULES_AVEC_UNDERSCORES`). Voir `--list`. |
+| `--count` | `-c` | `int ≥ 1` | `1` | Nombre de variations. |
+| `--seed` | | `int` | aléatoire | Graine : même graine + mêmes arguments = **mêmes prompts**. |
+| `--engine` | | `midjourney` \| `none` | `midjourney` | Suffixe de paramètres ; `none` = aucun suffixe. |
+| `--no-case-noise` | | flag | — | Désactive l'altération aléatoire de la casse. |
+| `--save` | `-s` | `str` | — | Écrit un fichier texte (§6.2). |
+| `--lexicon` | | chemin | lexique du dépôt | Lexique JSON alternatif (validé au chargement). |
+| `--quiet` | `-q` | flag | — | Sortie minimale : **uniquement les prompts, un par ligne** (idéal pour les pipes). |
+| `--list` | | flag | — | Liste runes / archétypes / lieux valides, puis quitte. |
+| `--version` | | flag | — | Affiche la version. |
 
 ### Exemples
 
 ```bash
-# Pipeline complet, sans ciblage
-python3 fracturo_prompt_forge_v2.py -p "portrait" -w
+# Palier « Avancé »
+python3 fracturo_prompt_forge_v2.py -p "portrait" -l 0.7
 
-# Ciblage rune + archétype
-python3 fracturo_prompt_forge_v2.py -p "portrait" -w --rune ᚦ --archetype shadow
+# Pipeline complet + ciblage rune/archétype/lieu
+python3 fracturo_prompt_forge_v2.py -p "caen street" -w -r Thurisaz -a shadow --location CAEN_PROFONDE
 
-# Ciblage d'un lieu
-python3 fracturo_prompt_forge_v2.py -p "caen street" -w --location CAEN_PROFONDE
+# 5 variations reproductibles, sorties nues, redirigées vers un fichier
+python3 fracturo_prompt_forge_v2.py -p "blacksmith" -w -c 5 --seed 42 -q > prompts.txt
 
-# 5 variations sauvegardées avec horodatage
-python3 fracturo_prompt_forge_v2.py -p "blacksmith" -w -c 5 -s batch
+# Sans suffixe Midjourney, casse d'origine
+python3 fracturo_prompt_forge_v2.py -p "ruins" -l 0.95 --engine none --no-case-noise
 
-# Sauvegarde vers un nom exact (suffixe .txt fourni → pas d'horodatage)
-python3 fracturo_prompt_forge_v2.py -p "blacksmith" -w -c 5 -s mes_prompts.txt
+# Sauvegarde horodatée (batch_AAAAMMJJ_HHMMSS.txt) ou à nom exact (.txt)
+python3 fracturo_prompt_forge_v2.py -p "x" -w -c 5 -s batch
+python3 fracturo_prompt_forge_v2.py -p "x" -w -c 5 -s sorties/mes_prompts.txt
 ```
 
-> ⚠️ Sans `--weaponised`, le script renvoie actuellement `"<prompt>, --weird 2000"` quel que soit `--level`, `--rune`, `--archetype` ou `--location` (voir §11).
+### Codes de sortie
 
-### Comportement en cas d'entrée invalide
-
-| Cas | Comportement |
+| Code | Signification |
 |---|---|
-| Lexique introuvable | Message d'erreur `❌`, arrêt de `main()`. **Code de sortie `0`** (pas d'erreur propagée). |
-| `--rune` inconnue | Avertissement `⚠️`, **rune aléatoire** à la place. |
-| `--archetype` inconnu (mode weaponised) | **Ignoré silencieusement** (aucun avertissement). |
-| `--location` inconnue | Ajoute `LOCATION:<NOM>` seul, sans coordonnées ni features. |
-| `--level` hors de 0–1 | Accepté tel quel (non utilisé). |
+| `0` | Succès |
+| `1` | Lexique introuvable / illisible / incomplet, ou écriture du fichier `--save` impossible |
+| `2` | Arguments invalides (`--level` hors plage, `--count < 1`, `--prompt` manquant…) |
+
+### Entrées inconnues
+
+| Cas | Comportement (avertissement sur **stderr**, jamais mêlé aux prompts de `--quiet`) |
+|---|---|
+| `--rune` inconnue | Avertissement, **rune aléatoire** |
+| `--archetype` inconnu | Avertissement listant les valeurs valides, **archétype aléatoire** |
+| `--location` inconnue | Avertissement ; seule l'étiquette `LOCATION:<NOM>` est ajoutée |
+| Lieu du lore sans enrichissement (ex. `DIVE_SUR_MER_GLITCH_HARBOR`) | Pas d'avertissement ; étiquette seule |
 
 ---
 
-## 5. Pipeline de génération (mode `--weaponised`)
+## 5. Moteur de génération
 
-Fonction : `generer_prompt_weaponised(prompt_base, lexique, rune, archetype, location)`.
+Point d'entrée : `generer_prompt(prompt_base, lexique, *, niveau, weaponised, rune, archetype, location, rng, engine, bruit_casse)`.
 
 ```
-prompt_base
+prompt_base (inchangé)
    │
-   ├─ [ciblage] --rune        → RUNE / MEANING / ELEMENT / ARCHETYPE / runes×(3–7) / BINDRUNE?
-   ├─ [ciblage] --archetype   → ARCHETYPE / JUNGIAN_* / ACTION / if (archetype == …) {…}
-   ├─ [ciblage] --location    → LOCATION / COORD? / FEATURE* (p=0.6 chacune)
+   ├─ [ciblage, tous modes] rune → archétype → lieu
    │
-   ├─ 1. RUNE_SEQUENCE          5–12 runes tirées avec remise
-   ├─ 2. ARCHETYPE_CONFLICT     2–4 archétypes distincts joints par _VS_
-   ├─ 3. Incantations           3–6 tirages (type aléatoire parmi 6, puis entrée aléatoire)
-   ├─ 4. Buffer overflow        1 entrée
-   │     Degradation string     1 entrée
-   ├─ 5. Signature temporelle   1 entrée
-   ├─ 6. Hex codes              3–6 tirages avec remise
-   ├─ 7. Stack traces           2–4 tirages avec remise
-   └─ 8. Protocoles MTT         2–4 tirages avec remise
-                │
-                ▼
-   join(", ")  →  altération de casse (p=0.7)  →  + ", --weird N --style raw --chaos 50"
+   ├─ mode niveaux  : construire_elements_niveau(niveau)   ── 4 paliers cumulatifs
+   │  ou weaponised : construire_elements_weaponised()     ── toutes les strates
+   │
+   ├─ join(", ") des éléments générés
+   ├─ altération de casse (probabilité p) — uniquement sur la partie générée
+   └─ + suffixe moteur  ", --weird W --style raw --chaos C"
 ```
 
-### 5.1 Blocs de ciblage (optionnels)
+### 5.1 Mode par niveaux (`--level`)
 
-**Rune** (`invoquer_rune_specifique`) — recherche `char` dans `RUNES_DATABASE.futhark_elder` ; si absente, rune aléatoire. Éléments produits :
+Paliers **cumulatifs** :
 
-```
-RUNE:THURISAZ, MEANING:chaos_destruction_gate, ELEMENT:FIRE, ARCHETYPE:THRESHOLD, ᚦᚦᚦᚦ
-```
+| Niveau | Palier | Ajoute |
+|---|---|---|
+| 0.0 – 0.3 | Subtil | 1–3 jetons glitch : erreur décorée d'un bracket (`[KERNEL_PANIC]`, `<SYSTEM_HALT>`, `::NaN`…) — 2–4 aux paliers suivants |
+| 0.3 – 0.6 | Modéré | `RUNE_SEQUENCE` (3–6 runes), 1–2 protocoles, 1–3 concepts MTT (`LOCATION:`, `ENTITY:`, `STATE:`, `ARTIFACT:`) |
+| 0.6 – 0.9 | Avancé | un archétype (`ARCHETYPE:` + `JUNGIAN_*`), 1–3 incantations (SQL, bash, Python, boucles…) |
+| 0.9 – 1.0 | Total | répétition, miroir, dégradation, 2–4 hex, 1–3 stack traces, buffer overflow, signature temporelle, coordonnée fractale |
 
-Puis, pour chaque *bindrune* de `bindrunes_custom` dont la chaîne `chars` contient la rune, ajout `BINDRUNE:<NOM>_<sens>` avec une probabilité de 0.5 (ex. `ᚦ` ∈ `THARK` et `NITHH`).
+Bornes : `0.3`, `0.6`, `0.9` appartiennent au palier supérieur.
 
-**Archétype** — tire un terme dans `STRATE_3_ARCHETYPES_JUNG_EXTENDED[archétype]` et une action dans `STRATE_6_INVOCATION_TARGETS.archetypes_specific[archétype]` :
+### 5.2 Mode `--weaponised`
 
-```
-ARCHETYPE:SHADOW, JUNGIAN_LOST_SOUL, ACTION:REVEAL_HIDDEN, if (archetype == 'shadow') { reveal_hidden(); }
-```
+Ajoute **22 à 38 éléments** (hors ciblage), dans cet ordre :
 
-**Location** — nom mis en majuscules, puis :
-- `LOCATION:<NOM>` toujours ajouté ;
-- première coordonnée de `fractal_coordinates` **contenant le nom en sous-chaîne** (`COORD:…`) ;
-- chaque *feature* de `locations_specific[<NOM>]` avec p=0.6 (`FEATURE:<NOM>`).
+| # | Étape | Quantité |
+|---|---|---|
+| 1 | `RUNE_SEQUENCE` | 1 (5–12 runes, avec remise) |
+| 2 | `ARCHETYPE_CONFLICT` (archétypes distincts joints par `_VS_`) | 1 (2–4 archétypes) |
+| 3 | Incantations (type puis entrée, sans doublon) | 3–6 |
+| 4 | Buffer overflow, chaîne de dégradation | 1 + 1 |
+| 5 | Signature temporelle | 1 |
+| 6 | Codes hex (sans doublon) | 3–6 |
+| 7 | Stack traces (sans doublon) | 2–4 |
+| 8 | Protocoles MTT (sans doublon) | 2–4 |
+| 9 | Jetons glitch / séquences miroir / répétitions / concepts MTT / regex | 2–4 / 1–2 / 1–2 / 2–4 / 1 |
 
-### 5.2 Étapes aléatoires 1 → 8
+Les tirages de listes se font **sans remise** (aucun doublon d'un même fragment).
 
-Hors ciblage, ces étapes ajoutent **entre 15 et 25 éléments** à la liste :
+### 5.3 Blocs de ciblage (tous modes)
 
-| # | Étape | Éléments | Source dans le lexique |
-|---|---|---|---|
-| 1 | `RUNE_SEQUENCE:` | 1 (5–12 caractères) | `RUNES_DATABASE.futhark_elder[*].char` |
-| 2 | `ARCHETYPE_CONFLICT:` | 1 (2–4 clés) | clés de `STRATE_3_…` (sans remise) |
-| 3 | Incantations | 3–6 | `STRATE_4_…` : `conditionals`, `sql_injections`, `bash_commands`, `function_calls`, `loop_structures`, `python_code` |
-| 4a | Buffer overflow | 1 | `STRATE_5_….buffer_overflows` |
-| 4b | Chaîne de dégradation | 1 | `STRATE_5_….degradation_strings` |
-| 5 | Signature temporelle | 1 | `STRATE_5_….temporal_signatures` |
-| 6 | Codes hex | 3–6 | `STRATE_5_….hex_sequences` |
-| 7 | Stack traces | 2–4 | `STRATE_5_….stack_traces` |
-| 8 | Protocoles | 2–4 | `STRATE_1_….protocols` |
+Placés juste après le prompt de base, dans l'ordre rune → archétype → lieu.
 
-Les tirages se font **avec remise** (sauf les archétypes de l'étape 2) : un même fragment peut apparaître plusieurs fois.
+- **Rune** — `RUNE:THURISAZ, MEANING:chaos_destruction_gate, ELEMENT:FIRE, ARCHETYPE:THRESHOLD, ᚦᚦᚦ` (3–7 répétitions), puis `BINDRUNE:<NOM>_<sens>` pour chaque bindrune contenant la rune (p = 0.5 chacune ; ex. `ᚦ` ∈ `THARK`, `NITHH`).
+- **Archétype** — `ARCHETYPE:SHADOW, JUNGIAN_LOST_SOUL, ACTION:REVEAL_HIDDEN, if (archetype == 'shadow') { reveal_hidden(); }`.
+- **Lieu** — `LOCATION:<NOM>`, `COORD:…` si une coordonnée existe, puis chaque *feature* du lieu avec p = 0.6.
 
-### 5.3 Assemblage final
+**Recherche de coordonnée.** Elle compare le nom aux **segments** (séparés par `::`) de chaque entrée de `fractal_coordinates` : correspondance exacte d'abord, puis par **préfixe** (≥ 3 caractères). Ainsi `CAEN_PROFONDE` et l'alias `CAEN` retrouvent `[49.1829N, 0.3707W]::CAEN_PROFONDE::DEPTH_7`, et une sous-chaîne quelconque (`AE`, `X`) ne produit pas de faux positif.
 
-1. `", ".join(elements)`.
-2. Avec une probabilité de **0.7**, chaque caractère est passé en majuscule (p=0.4) ou en minuscule (p=0.6) → texte « bruité » type `pORTrAIT, rUne:ThUrisAZ…`. Les runes ne sont pas affectées (pas de casse).
-3. Suffixe **toujours ajouté** : `, --weird <3000–5000> --style raw --chaos 50`. Ce suffixe n'est pas affecté par l'altération de casse.
+### 5.4 Altération de casse
 
-> Ces paramètres reprennent la syntaxe de Midjourney. Le script cible aussi « Grok » (cf. `META_DATA.target_engine`). La plage `--weird` générée (3000–5000) dépasse la plage documentée par Midjourney (0–3000) ; le comportement dépend du moteur utilisé, et le suffixe peut être supprimé à la main si besoin.
+Chaque caractère de la partie générée devient majuscule (p = 0.4) ou minuscule (p = 0.6), **avec une probabilité globale** :
+
+| Mode | Probabilité d'appliquer le bruit |
+|---|---|
+| `--weaponised` | 0.7 |
+| Niveaux | `max(0, niveau − 0.3)` (0 en palier Subtil, 0.6 à 0.9, 0.7 à 1.0) |
+
+Le **prompt de base** et le **suffixe** ne sont jamais altérés. `--no-case-noise` désactive tout.
+
+### 5.5 Suffixe moteur (`--engine midjourney`, défaut)
+
+Syntaxe Midjourney, avec les **plafonds documentés respectés** (`--weird` 0–3000, `--chaos` 0–100) :
+
+| Mode | `--weird` | `--chaos` |
+|---|---|---|
+| `--weaponised` | 2500–3000 | 50–100 |
+| Niveaux | `int(niveau × 3000 × U(0.6, 1.0))` | `int(niveau × 60)` |
+
+`--style raw` est toujours ajouté. `--engine none` supprime le suffixe (utile pour les moteurs n'utilisant pas ces paramètres).
 
 ---
 
-## 6. Format de sortie
+## 6. Format de sortie et sauvegarde
 
-### 6.1 Sortie console
+### 6.1 Console
 
-Chaque exécution affiche : une bannière d'aide (`afficher_menu`), le récapitulatif des paramètres, puis chaque variation séparée par des lignes de tirets, et enfin un message de fin et un avertissement.
+- **Normal** : bannière (paliers de corruption), récapitulatif des paramètres, **graine** (`🎲 Graine: N (rejouable avec --seed N)`), variations séparées par des tirets, message de fin.
+- **`--quiet`** : uniquement les prompts, un par ligne, sur stdout. Avertissements et erreurs restent sur stderr.
 
-### 6.2 Exemple réel de variation
-
-Commande : `python3 fracturo_prompt_forge_v2.py -p "portrait" -w -r ᚦ -a shadow --location GANIL_SITE`
-
-```
-pORTrAIT, rUne:ThUrisAZ, mEAniNG:chAoS_DEstrUcTIoN_gate, ElEMEnt:fiRe, arcHetype:tHreshoLd, ᚦᚦᚦᚦ, ArChEtyPe:ShadOW, jUngiAn_lost_soul, acTion:reveAl_hIdDeN, If (aRCHETYpE == 'ShaDoW') { reVeaL_hIddeN(); }, Location:gaNIL_SiTe, coORD:[49.2167N, 0.4167W]::GaNil_sitE::QUantuM_aNoMAly, feature:quANTUM_LAb, Feature:resEarch_void, runE_SequEncE:ᚱᛃᚠᚦᚾᚦᛁᚾᛟᛟᚲᛏ, ARCheTYPe_cONflIct:Wise_old_vs_HERo_vs_shAdoW_vS_TRiCksTer, do { time.folD(); } wHile (entROpY < thReshOLd), imPORT sYS; SyS.moDules['RealitY'] = none, void.summoN(eNtiTy='LOsT_SouL', QUantity=inFiNity), fRacTal_FRActAl_frActaL_FrACtaL_FRaCtaL_frAcTaL_FraCtaL_FrACTAl, RuNe_Smith... rUne_smi... RUnE_sm... runE_... RuNE... ruN... RU... R... [NuLl], TeMpORAl_STaTUs: cOLlaPsInG::ProbaBility_0.876, 0xchthoNiC_13, 0xFrActaL_666, 0xrEALITy_crACk, at reALity.renDer(2075:404), At JuNgianSHadOW.cONsume(egO:0X00), AT paleoMEmE.rESurFaCe(Latent_spACE:INfiNITY), At rUnEsmItH.aWAkEN(cAEn_proFonde:666), vauVillEnsis_PROtOcOl, MEmETIc_WarfArE_pHAsE_3, CAeN_PrOfondE_gAtewAy, --weird 3379 --style raw --chaos 50
-```
-
-Les sorties **diffèrent à chaque exécution** (aucune graine fixée, voir [§9](#9-utilisation-comme-bibliothèque-python)).
-
-### 6.3 Fichier de sauvegarde (`--save`)
-
-Nom de fichier :
+### 6.2 Fichier `--save`
 
 | `--save` | Fichier créé |
 |---|---|
 | `batch` | `batch_<AAAAMMJJ_HHMMSS>.txt` |
-| `mes_prompts.txt` | `mes_prompts.txt` (écrasé s'il existe) |
+| `dossier/prompts.txt` | `dossier/prompts.txt` (écrasé s'il existe) |
 
-Le fichier est créé dans le **répertoire courant** (ou au chemin fourni), en UTF-8 :
+Les dossiers parents sont créés au besoin. Le fichier est écrit en UTF-8 :
 
 ```
-# FracturoPrompt Forge v2.0 - 2026-11-11 22:19:31.521695
-# Mode: WEAPONISED            (ou "Level 0.7")
-# Prompt original: x
+# FracturoPrompt Forge v2.1.0 - 2026-11-12 10:03:11.123456
+# Mode: WEAPONISED                   (ou "Level 0.7 (Avancé)")
+# Engine: midjourney
+# Seed: 2026
+# Prompt original: portrait
 
 ## Variation 1
 <prompt>
@@ -263,20 +268,33 @@ Le fichier est créé dans le **répertoire courant** (ou au chemin fourni), en 
 <prompt>
 ```
 
+### 6.3 Exemple réel
+
+`python3 fracturo_prompt_forge_v2.py -p "portrait" -w -r ᚦ -a shadow --location GANIL_SITE --seed 2026 -q`
+*(reproductible : même graine, même sortie)*
+
+```
+portrait, rune:ThurisAZ, meaniNg:chaos_dEstructioN_gAte, EleMeNt:firE, archEType:ThresHold, ᚦᚦᚦ, bInDRUNe:tHarK_cHAOs_gate, aRchetYpE:sHADOw, jUnGian_Damned_doUBle, actION:COnSume_egO, IF (arcHETYpe == 'shADow') { CoNsuMe_egO(); }, LoCATioN:GANiL_site, COOrD:[49.2167n, 0.4167w]::gaNiL_Site::QuAntum_anOMaLy, Rune_SequEnCe:ᛖᛈᛒᛖᛖᛉᚲᛉᚦᛗᛁ, archetYpE_ConflICT:WiSe_olD_vS_TricksTeR_Vs_AnIma_vS_SeLf, TAr -XvF rEaLitY.taR.gZ --overWRIte, SYnaptiC.DRiFT(sUbJecT='RunE_smitH', direcTIoN='ChThOnIC'), fOreacH (soUL In LOst_SOuLs) { sOul.bInD(rUne); }, [glITcH FOR layER in REaLITy.lAyERs if LaYEr.depth > 7], If (RuNe.ActivATEd == true) { OPen(gatE_ChAos); }, cAEN_ProFoNde_CaEn_profonde_caEn_PrOFoNde_caeN_PROfONde, FracTAl... frAct... frac... FRa... fr... F... [ErROr], eRA: Memetic_WaRFAre::wAve_3, 0xdeAd_Beef, 0xecHO_GuIlLAuMe, 0XREaliTy_CRAcK, 0xlatENT_sPaCe, 0xDeAd_Face, AT pALeomeme.resuRFAce(lateNt_SPAce:iNFINITy), aT CHTHoNIclayeR.InvAde(dEpth:11), cAen_PRofoNde_GatewaY, DreAmWeaVer_actIve, Mtt_Active, FRactal_nORMaNdy_ActIVE, ^^ROOt_acCess_DeNied, }DEadLoCk, ^^rAce_COnditioN, [DivIDe_BY_ZERo], RUNe_smiTh_HtiMs_Enur, 0X4f4F4f4f, locaTIon:EVrecy_fracTaL_AIrfielD, artIfaCt:echo_guilLaume_recORDIng, arTIfact:DasheM44_grafFIti, LOCATIoN:peGAsuS_BriDge_anoMaLY, /(SElEct|Drop|inSeRT|delEtE).*FROM.*lAtent_sPAce/i, --weird 2549 --style raw --chaos 76
+```
+
 ---
 
 ## 7. Le lexique `vauvillensis_lexicon_v2.json`
 
-JSON UTF-8, 7 sections de premier niveau. Les compteurs ci-dessous ont été vérifiés sur le fichier.
+JSON UTF-8, 7 sections. Chargé et **validé** au démarrage (`valider_lexique`) : une section ou clé manquante produit une erreur explicite (code 1) au lieu d'un `KeyError` en cours d'exécution.
 
-### 7.1 `META_DATA`
+| Section | Contenu | Utilisation |
+|---|---|---|
+| `META_DATA` | version `2.1`, codex, classification… | informatif, non lu |
+| `RUNES_DATABASE` | `futhark_elder` (24 runes `{char, name, meaning, element, archetype}`), `bindrunes_custom` (5) | `--rune`, `RUNE_SEQUENCE`, bindrunes |
+| `STRATE_1_SYNTAX_GLITCH` | `brackets` (16), `errors` (23), `protocols` (15) | jetons glitch, protocoles |
+| `STRATE_2_CONCEPTS_MTT` | `locations` (18), `entities` (23), `states` (22), `artifacts` (12) | concepts MTT ; lieux reconnus par `--location` |
+| `STRATE_3_ARCHETYPES_JUNG_EXTENDED` | 6 archétypes (11–12 termes chacun) | `--archetype`, conflits d'archétypes |
+| `STRATE_4_INCANTATIONS_PSEUDOCODE` | `conditionals` 8, `sql_injections` 12, `bash_commands` 13, `function_calls` 12, `loop_structures` 8, `python_code` 9, `regex_patterns` 6 | incantations (+ regex en weaponised) |
+| `STRATE_5_FRACTUROSCRIPT_PATTERNS` | `repetition_patterns` 11, `mirror_sequences` 7, `degradation_strings` 8, `hex_sequences` 19, `stack_traces` 14, `buffer_overflows` 5, `fractal_coordinates` 6, `temporal_signatures` 5 | palier Total, weaponised, `--location` |
+| `STRATE_6_INVOCATION_TARGETS` | `runes_by_name` (24), `archetypes_specific` (6), `locations_specific` (5) | `archetypes_specific` et `locations_specific` utilisés ; `runes_by_name` non lu (la résolution par nom passe par `futhark_elder`) |
 
-Métadonnées informatives (`version: "2.0-fixed"`, `codex: "Vauvillensis_Extended"`, `theory: "MTT_Memetic_Temporal_Theory"`, `target_engine: "Grok/Diffusion_Latent_Space"`…). **Non lues par le script.**
-
-### 7.2 `RUNES_DATABASE`
-
-- `futhark_elder` : **24 runes**, chacune `{char, name, meaning, element, archetype}`.
-- `bindrunes_custom` : **5** runes liées inventées, `{chars, meaning}`.
+### Runes (`--rune`, caractère ou nom)
 
 | Char | Nom | Sens | Élément | Archétype |
 |---|---|---|---|---|
@@ -305,86 +323,56 @@ Métadonnées informatives (`version: "2.0-fixed"`, `codex: "Vauvillensis_Extend
 | ᛞ | Dagaz | day_breakthrough | fire | awakening |
 | ᛟ | Othala | heritage_ancestry | earth | legacy |
 
-Bindrunes : `THARK` (ᚦᚨᚱᚲ, chaos_gate), `HAGAL` (ᚨᚷᛚ, storm), `NITHH` (ᚾᚦᚺ, cursed_edge), `VORT` (ᚢᛟᚱᛏ, temporal_vortex), `IZONE` (ᛉᛟᚾᛖ, latent_zone).
+Bindrunes : `THARK` (ᚦᚨᚱᚲ), `HAGAL` (ᚨᚷᛚ), `NITHH` (ᚾᚦᚺ), `VORT` (ᚢᛟᚱᛏ), `IZONE` (ᛉᛟᚾᛖ).
 
-### 7.3 `STRATE_1_SYNTAX_GLITCH`
+### Lieux (`--location`)
 
-| Clé | Entrées | Utilisée par le script |
-|---|---|---|
-| `brackets` | 16 | ❌ |
-| `errors` | 23 | ❌ |
-| `protocols` | 15 | ✅ (étape 8) |
+- **Enrichis** (`locations_specific`, avec *features* et coordonnée) : `CAEN_PROFONDE`, `BEAUMONT_HAGUE`, `GANIL_SITE`, `POINT_HAGUE`, `ROUEN_NEO_GOTHIC`.
+- **Reconnus** : les 18 lieux de `STRATE_2_CONCEPTS_MTT.locations` (étiquette seule).
+- **Alias** : tout préfixe de segment d'une coordonnée (≥ 3 caractères), ex. `CAEN`.
 
-### 7.4 `STRATE_2_CONCEPTS_MTT`
+`fractal_coordinates` (v2.1) :
 
-`locations` (18), `entities` (23), `states` (22), `artifacts` (12) : vocabulaire du lore. **Section entière non utilisée par le script.**
+| Coordonnée | Lieu |
+|---|---|
+| `[49.1829N, 0.3707W]::CAEN_PROFONDE::DEPTH_7` | Caen |
+| `[49.6500N, 1.8333W]::BEAUMONT_HAGUE::FRACTAL_NODE` | Beaumont-Hague (corrigée) |
+| `[49.2167N, 0.4167W]::GANIL_SITE::QUANTUM_ANOMALY` | GANIL (inchangée, approximative) |
+| `[49.7167N, 1.9417W]::POINT_HAGUE::TEMPORAL_RIFT` | Pointe de la Hague (corrigée) |
+| `[49.4431N, 1.0993E]::ROUEN_NEO_GOTHIC::CATHEDRAL_NODE` | Rouen (nouvelle ; longitude **Est**) |
+| `[LATENT_SPACE::X:0xDEAD::Y:0xBEEF::Z:INFINITY]` | coordonnée générique |
 
-### 7.5 `STRATE_3_ARCHETYPES_JUNG_EXTENDED`
+Ces coordonnées sont des **valeurs d'ambiance**, approximatives.
 
-6 archétypes : `shadow` (12), `anima` (12), `trickster` (11), `wise_old` (12), `hero` (12), `self` (11). Utilisée par `--archetype` et l'étape 2.
+### Étendre le lexique
 
-### 7.6 `STRATE_4_INCANTATIONS_PSEUDOCODE`
-
-| Clé | Entrées | Utilisée |
-|---|---|---|
-| `conditionals` | 8 | ✅ |
-| `sql_injections` | 12 | ✅ |
-| `bash_commands` | 13 | ✅ |
-| `function_calls` | 12 | ✅ |
-| `loop_structures` | 8 | ✅ |
-| `python_code` | 9 | ✅ |
-| `regex_patterns` | 6 | ❌ |
-
-### 7.7 `STRATE_5_FRACTUROSCRIPT_PATTERNS` et `STRATE_6_INVOCATION_TARGETS`
-
-| Section / clé | Entrées | Utilisée |
-|---|---|---|
-| S5 `repetition_patterns` | 11 | ❌ |
-| S5 `mirror_sequences` | 7 | ❌ |
-| S5 `degradation_strings` | 8 | ✅ |
-| S5 `hex_sequences` | 19 | ✅ |
-| S5 `stack_traces` | 14 | ✅ |
-| S5 `buffer_overflows` | 5 | ✅ |
-| S5 `fractal_coordinates` | 5 | ✅ (`--location`) |
-| S5 `temporal_signatures` | 5 | ✅ |
-| S6 `runes_by_name` | 24 | ❌ |
-| S6 `archetypes_specific` | 6 | ✅ (`--archetype`) |
-| S6 `locations_specific` | 5 | ✅ (`--location`) |
-
-**Lieux enrichis par `--location`** (`locations_specific`) : `CAEN_PROFONDE`, `BEAUMONT_HAGUE`, `GANIL_SITE`, `POINT_HAGUE`, `ROUEN_NEO_GOTHIC`. Les 18 lieux de `STRATE_2.locations` ne sont pas tous ciblables.
-
-**Coordonnées fractales** (`fractal_coordinates`) : 5 chaînes de type `[49.1829N, 0.3707W]::CAEN::DEPTH_7`. La correspondance se fait par **sous-chaîne** sur le nom de lieu (voir bug n°2, §11).
-
-### 7.8 Étendre le lexique
-
-Ajouter des entrées dans une liste existante est sans risque (les tirages utilisent `random.choice`). Pour ajouter un **nouvel archétype**, créer :
-
-1. la clé dans `STRATE_3_ARCHETYPES_JUNG_EXTENDED` (liste de termes) ;
-2. la clé homonyme dans `STRATE_6_INVOCATION_TARGETS.archetypes_specific` (liste d'actions).
-
-Pour un **nouveau lieu ciblable**, ajouter une clé en MAJUSCULES dans `locations_specific` et, si souhaité, une coordonnée dans `fractal_coordinates` dont la chaîne **contient exactement ce nom**.
+- Ajouter des entrées à une liste existante : sans risque.
+- **Nouvel archétype** : la clé doit exister dans `STRATE_3_…` (termes) **et** dans `STRATE_6_….archetypes_specific` (actions).
+- **Nouveau lieu enrichi** : clé en MAJUSCULES dans `locations_specific`, et une coordonnée dont l'un des segments (entre `::`) est exactement ce nom.
+- Les chaînes de `STRATE_2.locations` sont normalisées en majuscules pour la reconnaissance.
 
 ---
 
 ## 8. Architecture du code
 
-Fichier unique `fracturo_prompt_forge_v2.py`.
+Fichier unique `fracturo_prompt_forge_v2.py` (≈ 650 lignes).
 
-| Fonction | Rôle | État |
-|---|---|---|
-| `charger_lexique()` | Charge le JSON (UTF-8) ; affiche une erreur et renvoie `None` si absent. | ✅ utilisée |
-| `invoquer_rune_specifique(rune_char, lexique)` | Éléments liés à une rune + bindrunes. | ✅ appelée (indirectement, voir note) |
-| `invoquer_archetype_specifique(archetype, lexique)` | Éléments liés à un archétype. | ⚠️ **jamais appelée** (logique dupliquée inline) |
-| `invoquer_location_specifique(location, lexique)` | Éléments liés à un lieu. | ⚠️ **jamais appelée** (logique dupliquée inline) |
-| `weaponised_mode(prompt, lexique)` | Ancienne version du pipeline. | ❌ **code mort et cassé** (`AttributeError`) |
-| `generer_prompt_weaponised(...)` | Pipeline complet actif. | ✅ cœur du programme |
-| `afficher_menu()` | Bannière d'aide, toujours affichée. | ✅ |
-| `generer_prompt_glitche_v1(...)` | Mode non-weaponised. | ⚠️ **stub** : renvoie `prompt + ", --weird 2000"` |
-| `main()` | Parsing `argparse`, boucle de variations, sauvegarde. | ✅ |
+| Fonction | Rôle |
+|---|---|
+| `charger_lexique(chemin=None)` | Charge + valide le JSON ; lève `LexiqueError`. |
+| `valider_lexique(lexique)` | Vérifie les sections/clés de `CLES_REQUISES`. |
+| `resoudre_rune / resoudre_archetype` | Résolution (caractère ou nom ; normalisation) avec avertissement + repli aléatoire. |
+| `lieux_connus`, `trouver_coordonnee` | Lieux reconnus ; recherche de coordonnée par segment. |
+| `invoquer_rune_specifique / _archetype_ / _location_` | Blocs de ciblage, **réellement utilisés** par `generer_prompt`. |
+| `construire_elements_niveau(lexique, rng, niveau)` | Éléments d'un palier de corruption. |
+| `construire_elements_weaponised(lexique, rng)` | Pipeline maximal. |
+| `parametres_moteur`, `_bruit_de_casse` | Suffixe et altération de casse. |
+| **`generer_prompt(...)`** | **API principale.** |
+| `generer_prompt_weaponised`, `generer_prompt_glitche` | Wrappers de compatibilité / confort. |
+| `afficher_menu`, `lister_options`, `sauvegarder` | Sorties console et fichier. |
+| `construire_parser`, `main(argv=None) -> int` | CLI ; `main` retourne le code de sortie. |
 
-> `invoquer_rune_specifique` est bien appelée par `generer_prompt_weaponised`. Les deux autres `invoquer_*` n'ont pas été branchées et leur logique est recopiée inline dans `generer_prompt_weaponised`.
-
-L'import `os` est inutilisé. Le module n'exécute rien à l'import (`if __name__ == "__main__":`), il est donc importable.
+Tout le hasard passe par une instance `random.Random` injectée (`rng`), jamais par l'état global : c'est ce qui rend `--seed` fiable et les fonctions testables. Le module n'a **aucun effet de bord à l'import**.
 
 ---
 
@@ -394,97 +382,134 @@ L'import `os` est inutilisé. Le module n'exécute rien à l'import (`if __name_
 import random
 import fracturo_prompt_forge_v2 as forge
 
-lex = forge.charger_lexique()
+lex = forge.charger_lexique()          # lève forge.LexiqueError si invalide
+rng = random.Random(42)                # reproductibilité
 
-# Reproductibilité : le script n'expose pas de --seed, on le fixe côté appelant
-random.seed(42)
-
-prompt = forge.generer_prompt_weaponised(
-    "knight in the rain",
-    lex,
-    rune="ᚺ",
-    archetype="hero",
-    location="GANIL_SITE",
+# Mode weaponised ciblé
+p1 = forge.generer_prompt(
+    "knight in the rain", lex,
+    weaponised=True, rune="Hagalaz", archetype="hero", location="GANIL_SITE",
+    rng=rng,
 )
-print(prompt)
+
+# Mode par niveaux, sans suffixe, casse intacte
+p2 = forge.generer_prompt(
+    "ruins", lex, niveau=0.95, engine="none", bruit_casse=False, rng=rng,
+)
 ```
 
-Une option `--seed` en CLI est proposée en [§12](#12-pistes-damélioration).
+`generer_prompt` lève `ValueError` si `niveau ∉ [0, 1]` ou `engine` inconnu. Les avertissements (rune/archétype/lieu inconnus) sont émis sur `stderr`.
 
 ---
 
-## 10. Galerie
+## 10. Tests
 
-Les trois images du dépôt sont des exemples de rendus ; **le moteur et le prompt exacts ne sont pas documentés dans le dépôt**.
+```bash
+python3 -m unittest discover -s tests -v
+```
+
+43 tests (stdlib uniquement) couvrant : validation du lexique, reproductibilité par graine, intégrité du prompt de base, bornes de la sortie weaponised (22–38 éléments, aucun doublon), plafonds `--weird`/`--chaos`, contenu des 4 paliers, ciblage (rune par caractère/nom, bindrunes, alias de lieu, absence de faux positifs), **régressions des bugs v2.0**, codes de sortie, `--quiet`, `--save`, absence d'effet de bord à l'import.
+
+---
+
+## 11. Galerie
+
+Les trois images sont des exemples de rendus ; **le moteur et le prompt exacts ne sont pas documentés dans le dépôt**.
 
 | Fichier | Format | Description |
 |---|---|---|
-| `Cr4cked!.jpg` | 784×1168 | Forgeron barbu, visage et mains couverts de runes, tablette aux runes incandescentes en étoile, marteau runique, braises. Palette rouge/noir. |
-| `RuneSmith_level_0.7.jpg` | 784×1168 | Portrait glitché sur fond noir-violet : halo de runes, colonne de runes sur le visage, fragments de texte incrustés (`SELECT * FROM lost_souls`, `--weird 1667`, `ERROR 1667: BARRIERS_DISSOLVING`, `ORA-01403: no data found`, `WARNING: MEMETIC CONTAGION DETECTED`). |
-| `Street scene in Caen 2075.jpg` | 1168×784 | Rue médiévale-futuriste, bindrune violette au centre, colonne de runes bleues, panneau « CAEN 2075 », encarts rouges (`CAEN... CAE... CA... C... [ERROR]`, `CHTHONIC UNDERGROUND CAEN PROFONDE`). |
+| `Cr4cked!.jpg` | 784×1168 | Forgeron barbu aux runes tatouées, tablette aux runes incandescentes en étoile, marteau runique, braises. Palette rouge/noir. |
+| `RuneSmith_level_0.7.jpg` | 784×1168 | Portrait glitché noir-violet : halo et colonne de runes, fragments de texte incrustés (`SELECT * FROM lost_souls`, `--weird 1667`, `ERROR 1667`, `ORA-01403: no data found`, `WARNING: MEMETIC CONTAGION DETECTED`). |
+| `Street scene in Caen 2075.jpg` | 1168×784 | Rue médiévale-futuriste, bindrune violette centrale, panneau « CAEN 2075 », encarts rouges (`CAEN... CAE... CA... C... [ERROR]`, `CHTHONIC UNDERGROUND CAEN PROFONDE`). |
 
-Observation utile : plusieurs fragments du prompt (SQL, messages d'erreur, dégradation `CAEN... CAE... CA...`) **réapparaissent comme texte rendu dans l'image**. C'est l'effet recherché par l'outil. Le nom `RuneSmith_level_0.7` et la valeur `--weird 1667` (hors de la plage 3000–5000 du v2) suggèrent que cette image provient d'une version antérieure de la logique de génération ou d'un prompt écrit à la main.
+Plusieurs fragments du prompt réapparaissent **comme texte rendu dans l'image**, ce qui est l'effet recherché. `--weird 1667` et le nom `level_0.7` indiquent une origine antérieure au v2 (ou un prompt manuel). Avec la v2.1, un rendu comparable se génère via `-l 0.7`.
 
 ---
 
-## 11. État actuel, limitations et bugs connus
+## 12. Changelog v2.0 → v2.1 et migration
 
-Vérifié par exécution sur Python 3.12.
+### Corrections
 
-| # | Gravité | Constat |
+| # | Problème v2.0 | Correction v2.1 |
 |---|---|---|
-| 1 | **Haute** | **Le mode sans `--weaponised` est un stub.** `generer_prompt_glitche_v1` renvoie `"<prompt>, --weird 2000"` ; `--level`, `--rune`, `--archetype`, `--location` sont ignorés. Le tableau « Niveaux de corruption » affiché par `afficher_menu()` (0.0–0.3, 0.3–0.6, 0.6–0.9, 0.9–1.0) **n'est pas implémenté**. |
-| 2 | Moyenne | **`--location CAEN_PROFONDE` ne produit pas de coordonnées.** La recherche `location in coord` échoue car la coordonnée correspondante contient `::CAEN::` et non `CAEN_PROFONDE`. Idem pour `ROUEN_NEO_GOTHIC` (aucune coordonnée associée). Seuls `GANIL_SITE`, `BEAUMONT_HAGUE`, `POINT_HAGUE` (et `CAEN`) en reçoivent. |
-| 3 | Moyenne | **`weaponised_mode()` est du code mort et plante** : `lexique["RUNES_DATABASE"]["futhark_elder"].keys()` alors que c'est une *liste* → `AttributeError: 'list' object has no attribute 'keys'`. |
-| 4 | Moyenne | **Dépôt incohérent avec son README d'origine** : `stein_decoder` (CLI) et « Codex Stein » sont mentionnés mais **absents**. |
-| 5 | Faible | `--archetype` invalide ignoré sans message en mode weaponised (le message d'avertissement n'existe que dans la fonction `invoquer_archetype_specifique`, non appelée). |
-| 6 | Faible | Échec de chargement du lexique → code de sortie `0`. |
-| 7 | Faible | Pas de graine aléatoire exposée ; pas de validation de `--level` ni `--count` (valeur ≤ 0 → aucune variation, mais message « Génération terminée »). |
-| 8 | Faible | Sections du lexique non exploitées : `STRATE_2_CONCEPTS_MTT` (entière), `brackets`, `errors`, `regex_patterns`, `repetition_patterns`, `mirror_sequences`, `runes_by_name`, `META_DATA`. |
-| 9 | Faible | Doublons possibles dans une même sortie (tirages avec remise). |
-| 10 | Faible | Incohérences de données : `DASHem44` / `DASHEM44`, `Pegasus_Bridge_Anomaly` (casse mixte), `ABANDONNED`, `RETTCTED` ; plusieurs d'entre elles peuvent être volontaires (esthétique glitch). |
-| 11 | À vérifier | La coordonnée associée à `BEAUMONT_HAGUE` (`49.3167N, 0.7833W`) ne semble pas correspondre à la commune réelle de Beaumont-Hagues (Cotentin, vers 49,6°N 1,8°W), alors que celle de `POINT_HAGUE` (`49.6667N, 1.8333W`) s'en rapproche. Sans conséquence fonctionnelle, mais à contrôler si les coordonnées doivent être réalistes. |
-| 12 | Info | Aucun test, CI, licence ni packaging. |
+| 1 | Mode sans `--weaponised` = stub (`prompt, --weird 2000`) ; `--level` et ciblage ignorés ; paliers du menu non implémentés | 4 paliers cumulatifs implémentés ; ciblage actif dans tous les modes |
+| 2 | `--location CAEN_PROFONDE` / `ROUEN_NEO_GOTHIC` sans coordonnée (recherche par sous-chaîne) | Lexique corrigé + recherche par **segment exact puis préfixe** ; aucun faux positif |
+| 3 | `weaponised_mode()` : code mort, `AttributeError` | Supprimée (logique unifiée) |
+| 4 | README citait `stein_decoder` / Codex Stein absents | Retiré de la documentation (le code n'a jamais existé dans ce dépôt) |
+| 5 | Archétype invalide ignoré silencieusement | Avertissement + repli aléatoire, partout |
+| 6 | Lexique absent → code 0 | Code 1 + message ; validation de structure |
+| 7 | Pas de graine ; pas de validation de `--level` / `--count` | `--seed` (affichée et sauvegardée) ; validation argparse (code 2) |
+| 8 | Sections du lexique jamais lues | `STRATE_2`, `brackets`, `errors`, `regex_patterns`, `repetition_patterns`, `mirror_sequences` utilisées (seuls `META_DATA` et `runes_by_name` restent non lus) |
+| 9 | Doublons possibles | Tirages sans remise sur les listes |
+| 10 | Typos/casse du lexique | `ABANDONNED`→`ABANDONED`, `DASHem44`→`DASHEM44`, `Pegasus_Bridge_Anomaly`→`PEGASUS_BRIDGE_ANOMALY` (`RETTCTED` conservé : glitch volontaire) |
+| 11 | Coordonnée `BEAUMONT_HAGUE` incohérente | Corrigée ; `POINT_HAGUE` précisée ; Rouen ajouté |
+| 12 | Aucun test, fonctions `invoquer_*` jamais appelées, import `os` inutile | 43 tests ; fonctions branchées ; import supprimé |
+
+### Autres changements de comportement
+
+- Le **prompt de base n'est plus altéré** par le bruit de casse (avant : il l'était).
+- `--weird` en weaponised : **2500–3000** (avant 3000–5000, au-delà du plafond Midjourney) ; `--chaos` 50–100 (avant fixe à 50).
+- Sorties **plus denses** en weaponised (9ᵉ étape) : les sorties v2.0 et v2.1 ne sont pas comparables, même à graine égale.
+- L'avertissement « prompts weaponised pour reality cracking » est remplacé par une note neutre.
+- Nouvelles options : `--seed`, `--engine`, `--no-case-noise`, `--lexicon`, `--quiet`, `--list`, `--version`.
+
+### Migration (API Python)
+
+| v2.0 | v2.1 |
+|---|---|
+| `charger_lexique()` renvoie `None` si absent | **lève `LexiqueError`** |
+| `generer_prompt_glitche_v1(prompt, niveau, lexique)` | `generer_prompt_glitche(prompt, niveau, lexique, ...)` ou `generer_prompt(...)` |
+| `weaponised_mode(...)` | supprimée → `construire_elements_weaponised(lexique, rng)` |
+| `random` global | `rng=random.Random(seed)` injectable |
+| Python 3.6+ | Python 3.8+ |
+
+Un **ancien lexique v2.0** reste chargeable (mêmes clés), mais `--location CAEN_PROFONDE` n'y retrouvera pas de coordonnée : utiliser le lexique fourni.
 
 ---
 
-## 12. Pistes d'amélioration
+## 13. Limitations connues et pistes
 
-1. **Implémenter réellement `--level`** : par exemple, mapper les 4 paliers du menu sur des sous-ensembles d'étapes (palier 1 : brackets/errors ; palier 2 : + runes/MTT ; palier 3 : + archétypes/incantations ; palier 4 : + FracturoScript pur).
-2. **Factoriser** : faire appeler `invoquer_rune/archetype/location_specifique` par `generer_prompt_weaponised` et supprimer le code dupliqué ; supprimer `weaponised_mode`.
-3. **Corriger la recherche de coordonnées** : clé explicite (`{"CAEN_PROFONDE": "[49.1829N, 0.3707W]::CAEN::DEPTH_7", …}`) plutôt qu'une recherche par sous-chaîne.
-4. **Exposer `--seed`** pour la reproductibilité, et `--no-case-noise`, `--no-params`, `--engine {grok,midjourney}` pour adapter le suffixe.
-5. **Valider les entrées** (`--level ∈ [0,1]`, `--count ≥ 1`) et renvoyer un code de sortie ≠ 0 en cas d'erreur.
-6. **Brancher les sections inutilisées** (`STRATE_2`, `errors`, `mirror_sequences`, `repetition_patterns`…).
-7. **Ajouter des tests** (`pytest`) : validité du JSON, présence des clés requises, bornes des tirages aléatoires avec graine fixe.
-8. **Ajouter une `LICENSE`**, un `requirements.txt` vide ou `pyproject.toml`, et une CI minimale (lint + tests).
-9. **Documenter la provenance des images** (moteur, version, prompt exact) pour rendre la galerie reproductible.
+**Limitations**
+
+- Le suffixe est spécifique à la syntaxe Midjourney ; l'effet sur d'autres moteurs n'est pas garanti (`--engine none` pour le retirer).
+- Les coordonnées sont approximatives (valeurs d'ambiance) ; celle de `GANIL_SITE` n'a pas été re-vérifiée.
+- La provenance (moteur, prompt) des images de la galerie n'est pas documentée.
+- Aucune licence, CI ni packaging (`pyproject.toml`) n'est fournie.
+- Aucune évaluation quantitative de l'« effet » des prompts n'existe : le lexique est empirique.
+
+**Pistes**
+
+1. Ajouter des presets d'`--engine` supplémentaires, selon les syntaxes des moteurs ciblés.
+2. Pondérations configurables par strate (fichier de profil JSON).
+3. Sortie `--format json` (éléments par strate, graine, suffixe).
+4. Documenter les prompts exacts des images de la galerie.
+5. Ajouter une `LICENSE`, un `pyproject.toml` et une CI exécutant les tests.
 
 ---
 
-## 13. Glossaire du lore
+## 14. Glossaire du lore
 
 | Terme | Signification dans le projet |
 |---|---|
-| **MTT** | « Memetic Temporal Theory » (`META_DATA.theory`) : cadre fictif du projet. |
-| **Codex Vauvillensis** | Nom du lexique / corpus fictif dont le JSON est « l'extension ». |
+| **MTT** | « Memetic Temporal Theory » : cadre fictif du projet. |
+| **Codex Vauvillensis** | Corpus fictif dont le JSON est « l'extension ». |
 | **FracturoScript** | Style de prompt hybride : pseudo-code, erreurs système, hex, runes, répétitions et dégradations de chaînes. |
 | **Caen-Profonde** | Couche « souterraine » imaginaire de Caen en 2075. |
-| **GANIL** | Nom d'un laboratoire de physique nucléaire réel, situé à Caen, ici repris comme lieu du lore (« Ganil Site abandonné »). |
-| **RuneSmith / ECHO_GUILLAUME / DASHEM44** | Entités récurrentes du lore (forgeron de runes, signature, graffiti). |
+| **GANIL** | Laboratoire de physique nucléaire réel, situé à Caen, repris comme lieu du lore. |
+| **RuneSmith / ECHO_GUILLAUME / DASHEM44** | Entités récurrentes (forgeron de runes, signature, graffiti). |
 | **Strate** | Niveau thématique du lexique (S1 à S6). |
 | **Bindrune** | Combinaison de runes ; ici 5 combinaisons inventées. |
 
 ---
 
-## 14. Sécurité, éthique, licence
+## 15. Sécurité, éthique, licence
 
-- Les sorties sont du **texte inerte**. Il n'y a ni exécution de code, ni accès réseau, ni écriture de fichiers hors de l'option `--save`.
-- Le script n'envoie rien à aucun service : l'utilisateur copie-colle lui-même le prompt dans l'outil de son choix et reste soumis aux conditions d'utilisation de celui-ci.
-- Les avertissements « memetic contagion » du dépôt font partie de la **mise en scène** du projet.
-- **Licence : non spécifiée** — en l'absence de fichier `LICENSE`, les droits d'auteur par défaut s'appliquent. Ajouter une licence (MIT, Apache-2.0, CC-BY-SA pour le lexique, etc.) est recommandé avant toute réutilisation ou contribution externe.
-- Les images du dépôt sont des productions générées ; vérifier les conditions d'usage du moteur utilisé avant redistribution.
+- Les sorties sont du **texte inerte** : ni exécution de code, ni accès réseau, ni écriture de fichier hors de `--save`.
+- Le script n'envoie rien à aucun service : l'utilisateur copie lui-même le prompt dans l'outil de son choix et reste soumis aux conditions d'utilisation de celui-ci.
+- Les avertissements « memetic contagion » du lore font partie de la **mise en scène**.
+- **Licence : non spécifiée** — en l'absence de fichier `LICENSE`, les droits d'auteur par défaut s'appliquent. Ajouter une licence est recommandé avant toute réutilisation ou contribution externe.
+- Les images sont des productions générées ; vérifier les conditions d'usage du moteur utilisé avant redistribution.
 
 ---
 
-<sub>README rédigé à partir de l'analyse du code, du lexique et de tests d'exécution (Python 3.12) — novembre 2026.</sub>
+<sub>FracturoPrompt Forge v2.1.0 — documentation validée par exécution (Python 3.12, 43 tests) — novembre 2026.</sub>
