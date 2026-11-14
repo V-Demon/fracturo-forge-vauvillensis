@@ -88,7 +88,7 @@ def qc(name: str, alpha: int | None = None) -> QColor:
 # ════════════════════════════════════════════════════════════════════════════
 #  Feuille de style
 # ════════════════════════════════════════════════════════════════════════════
-def _arrow_png(color: str, up: bool = False) -> str:
+def arrow_png(color: str, up: bool = False) -> str:
     d = Path(tempfile.gettempdir()) / "vauv_editor_assets"
     d.mkdir(exist_ok=True)
     out = d / f"arrow_{'up' if up else 'down'}_{color.strip('#')}.png"
@@ -215,7 +215,7 @@ QGroupBox::title { subcontrol-origin: margin; left: 10px; padding: 0 6px; color:
 def stylesheet() -> str:
     return _QSS.substitute(
         ui=FONTS["ui"], mono=FONTS["mono"], display=FONTS["display"],
-        arrow_down=_arrow_png(C["cyan"]), **C,
+        arrow_down=arrow_png(C["cyan"]), **C,
     )
 
 
